@@ -1,9 +1,9 @@
-#[derive(Debug,Clone)]
+#[derive(Debug)]
 enum TransactionType{
     Deposition,
     Withdrawal
 }
-#[derive(Debug,Clone)]
+#[derive(Debug)]
 struct Transaction{
     id: u32,
     name:TransactionType,
@@ -12,17 +12,15 @@ struct Transaction{
 
 use crate::TransactionType::{Deposition,Withdrawal};
 
-#[derive(Debug,Clone)]
+#[derive(Debug)]
 struct Node{
     transaction: Transaction,
-    prev: Option<Box<Node>>,
-    next: Option<Box<Node>>,
+    next: Option<Box<Node>>
 }
 impl Node{
     pub fn new(transaction: Transaction)-> Node{
         Node{
             transaction,
-            prev:None,
             next: None,
         }
     }
@@ -32,19 +30,9 @@ impl Node{
             if let Some(ref mut node_present)= current.next{
                 current=node_present;
             }else{
-                let temp= Box::new(Node{
-                        transaction,
-                        prev: Some(Box::new(Node{
-                            transaction: current.transaction.clone(),
-                            next:None,
-                            prev: current.prev.take(),
-                        })),
-                        next: None,
-                    });
-                    current.next= Some(temp);
-                    break;
+                current.next= Some(Box::new(Node::new(transaction)));
+                break;
             }
-            
         }
     }
 
@@ -66,9 +54,9 @@ impl Node{
         }
     
     }
-
-    pub fn show_all(& self){
-        println!("Prnting all transactions: ");
+    
+    pub fn show_all(&self){
+        println!("Printing all transactions: ");
         let mut current= self;
         loop{
             if let Some(ref node_present)=current.next{
@@ -104,7 +92,8 @@ fn main(){
     head_trans.add_transaction(trans3);
     println!("{:?}", head_trans);
 
-   let popped_transaction= head_trans.remove_transaction();
-   println!("{:?}", popped_transaction);
+    let popped_transaction= head_trans.remove_transaction();
+    println!("{:?}", popped_transaction);
+
     head_trans.show_all();
 }
